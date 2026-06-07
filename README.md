@@ -1,5 +1,4 @@
 # Wazuh
 
-The documentation is still in progress. I will update soon.
+Technical documentation is actively being updated. Completed items are live, and notes for in-progress tasks will be pushed as they wrap up.
 
-https://www.linkedin.com/posts/md-jamiul-haque_cybersecurity-soc-wazuh-activity-7277372412252332032-BqJM?utm_source=share&utm_medium=member_desktop
