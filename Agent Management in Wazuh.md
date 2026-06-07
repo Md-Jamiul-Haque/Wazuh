@@ -325,15 +325,13 @@ Connect to your Wazuh manager via SSH and start by listing agents that are runni
 /var/ossec/bin/agent_upgrade -l
 ```
  
-<img src="">
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/list%20agent%20upgrade.png">
  
 You can also run the tool with no flags to see all available options:
  
 ```bash
 /var/ossec/bin/agent_upgrade
 ```
-<img src=""> 
-*[INSERT SCREENSHOT — agent_upgrade help output showing all available flags and usage options]*
  
 To upgrade a single agent:
  
@@ -349,21 +347,15 @@ To upgrade multiple agents at once:
  
 > **Prerequisite:** The target agent must be in **Active** status and connected to the manager. Disconnected agents can't be upgraded remotely.
 
-<img src="">
-*[INSERT SCREENSHOT — Terminal showing the upgrade command being run and the successful upgrade output from version 4.12 to 4.14]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20upgrade%20cli.png">
  
 > **Gotcha to watch out for:** Occasionally, the upgrade command returns output saying the agent was updated to the same version it was already on. This is a known quirk — just run the command again and it typically completes successfully on the second attempt.
 
- <img src="">
-*[INSERT SCREENSHOT — Terminal showing the quirk where the upgrade reports the same version, and then the re-run succeeding]*
- 
 After the upgrade, verify the agent's current version:
  
 ```bash
 /var/ossec/bin/agent_control -i <agent_id>
 ```
-<img src="">
-*[INSERT SCREENSHOT — agent_control output confirming the agent is now running Wazuh 4.14]*
  
 ---
  
@@ -378,10 +370,17 @@ TOKEN=$(curl -u <WAZUH_API_USER>:<WAZUH_API_PASSWORD> -k -X POST \
   "https://localhost:55000/security/user/authenticate?raw=true")
 ```
  
-Default credentials are `wazuh:wazuh`. If you ran the password rotation script during initial setup, retrieve the current API password with:
- 
+You can retrieve the current API password with:
+
+First find the installation location
+
 ```bash
-tar -axf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt -O | grep -P "'wazuh'" -A 1
+find / -name "wazuh-install-files.tar" 2>dev/null
+```
+Then check the passwords
+
+```bash
+tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 ```
  
 **Step 2 — Check your token:**
@@ -405,7 +404,8 @@ curl -k -X GET "https://localhost:55000/?pretty=true" \
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
   -H "Authorization: Bearer $TOKEN"
 ```
- 
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/list%20agents%20api.png">
+
 **Step 5 — Trigger the upgrade:**
  
 ```bash
@@ -413,7 +413,7 @@ curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade?agents_list=<age
   -H "Authorization: Bearer $TOKEN"
 ```
  
-*[INSERT SCREENSHOT — API response showing the upgrade being initiated for the specified agents]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/upgrade%20agents%20using%20api.png">
  
 **Step 6 — Check upgrade result:**
  
@@ -422,16 +422,15 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade_result?agents_li
   -H "Authorization: Bearer $TOKEN"
 ```
  
-*[INSERT SCREENSHOT — API response showing "status: updated" and "message: success" for the upgraded agent]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/check%20agent%20upgrade%20result%20api.png">
  
 **Step 7 — Confirm the new version:**
  
 ```bash
-curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?agents_list=<agent_id>&pretty=true&select=version" \
+curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
   -H "Authorization: Bearer $TOKEN"
 ```
- 
-*[INSERT SCREENSHOT — API response confirming the agent is now running version 4.14.0]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20upgrade%20check%20api.png">
  
 ---
  
@@ -453,7 +452,7 @@ The agent list shows each agent's name, status, and version. If an agent is runn
  
 Find the agent you want to upgrade, click the **three-dot menu (⋮)** in the Actions column, and select **Upgrade**.
  
-*[INSERT SCREENSHOT — Three-dot menu expanded showing the "Upgrade" option for a specific agent]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20upgrade%20gui.png">
  
 *[INSERT SCREENSHOT — Upgrade confirmation or progress indicator appearing after clicking Upgrade]*
  
