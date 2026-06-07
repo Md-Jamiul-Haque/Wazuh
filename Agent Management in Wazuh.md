@@ -70,8 +70,7 @@ Start by listing the contents of the shared directory to see your current group 
 ls -lah /var/ossec/etc/shared/
 ```
  
-*[INSERT SCREENSHOT — Output of the shared directory listing showing existing group folders]*
- <img src="">
+ <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/shared-directory-content.png">
 You'll see a subfolder for each group that exists on your manager. If you haven't created any custom groups yet, you'll only see the `default` folder here.
  
 Now take a look inside the `default` group:
@@ -80,19 +79,19 @@ Now take a look inside the `default` group:
 ls -lah /var/ossec/etc/shared/default
 ```
  
-*[INSERT SCREENSHOT — Contents of the /var/ossec/etc/shared/default directory showing compliance and config files]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/default-directory-content.png">
  
 Inside you'll find files like `cis_debian_linux_rcl.txt`, `win_audit_rcl.txt`, `rootkit_files.txt`, and more. These are Wazuh's built-in security and compliance check definitions, distributed automatically to all agents in the default group.
  
-Now here's what a custom group looks like — let's use a `windows` group as an example:
+Now here's what a custom group looks like — let's use a `windows_grp` group as an example:
  
-*[INSERT SCREENSHOT — Contents of the custom "windows" group folder showing agent.conf]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/windows_grp-directory.png">
  
 As you can see, a custom group starts lean — just the `agent.conf` file. That's your canvas.
  
 Let's look at what an actual `agent.conf` might contain:
  
-*[INSERT SCREENSHOT — Contents of agent.conf from the "windows" group showing localfile/log monitoring configuration]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/windows_grp-conf-file.png">
  
 In my lab, the Windows group's `agent.conf` tells agents to monitor specific Windows Event Viewer channels and forward those events to the Wazuh manager. Once received, the manager processes and normalises them, and they appear in the Dashboard. It's a clean, centralised way to push targeted monitoring instructions without touching each endpoint individually.
  
@@ -105,16 +104,17 @@ Wazuh ships with a built-in CLI tool for group management: `agent_groups`. Start
 ```bash
 /var/ossec/bin/agent_groups
 ```
- 
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/show-agent-groups-cli.png">
+
 To create a new group, use the `-a` (add) and `-g` (group name) flags:
  
 ```bash
 /var/ossec/bin/agent_groups -a -g <your_group_name>
 ```
- 
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/create-agent-group-cli.png">
+
 If the operation succeeds, you'll get confirmation that the group was created. Run `agent_groups` again to verify it appears in the list.
  
-*[INSERT SCREENSHOT — Terminal showing the creation of a new group and the updated group list confirming its addition]*
  
 > **SOC Tip:** Use a naming convention from day one. Something like `win-workstations`, `linux-servers`, or `critical-assets` beats generic names when you're staring at a list of 15 groups at 2am.
  
@@ -129,7 +129,9 @@ Once your group exists, assigning an agent is straightforward. You'll need the a
 ```
  
 Type `L` and hit Enter to list all agents with their IDs and statuses.
- 
+
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/manage_agent-cli.png">
+
 > **Note:** Agent IDs in Wazuh are unique — you'll never have two agents sharing the same ID. Duplicate ID conflicts will show up as connection errors in your logs, which is worth knowing when troubleshooting.
  
 With the agent ID in hand, run:
@@ -137,7 +139,8 @@ With the agent ID in hand, run:
 ```bash
 /var/ossec/bin/agent_groups -a -i <agent_id> -g <group_name>
 ```
- 
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/add-agent-to-grp.png">
+
 Then verify the assignment:
  
 ```bash
@@ -149,10 +152,6 @@ Or for a more targeted check:
 ```bash
 /var/ossec/bin/agent_groups -l
 ```
- 
-*[INSERT SCREENSHOT — Terminal showing the agent assignment command and the subsequent group listing confirming the agent was added]*
- 
-*[INSERT SCREENSHOT — Zoomed-in view of the group listing with the agent now appearing under the correct group]*
  
 ---
  
@@ -166,8 +165,6 @@ If you prefer automation or work in a cluster environment, the Wazuh RESTful API
 curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/authenticate"
 ```
  
-Default credentials are `wazuh-wui:wazuh-wui`. The response will contain your token — copy the full string.
- 
 > **Heads up:** JWT tokens issued by the Wazuh API expire after **15 minutes (900 seconds)**. If your subsequent API calls start failing with auth errors, just re-run the authentication command above to get a fresh token.
  
 **Step 2 — Assign the agent to a group:**
@@ -179,7 +176,7 @@ curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/<agent_id>/group/<group_
  
 > Replace `$TOKEN` with the actual token string — the variable won't resolve unless you've exported it in your session.
  
-*[INSERT SCREENSHOT — Terminal output showing a successful API response after assigning an agent to a group]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20assign%20using%20api.png">
  
 **Step 3 — Verify via CLI:**
  
@@ -194,7 +191,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/groups/<group_name>/agents?pret
   -H "Authorization: Bearer $TOKEN"
 ```
  
-*[INSERT SCREENSHOT — API response showing the list of agents now assigned to the group]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/check%20agents%20in%20grp%20using%20api.png">
  
 **One important thing to know:** A single agent can belong to multiple groups simultaneously. It will pull and merge configurations from all assigned groups. This is useful when you want a baseline config from one group and a role-specific config from another.
  
@@ -205,18 +202,15 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/groups/<group_name>/agents?pret
 To remove an agent from a specific group without affecting its other group memberships:
  
 ```bash
-/var/ossec/bin/agent_groups -r -i <agent_id> -g <group_name> -q
+/var/ossec/bin/agent_groups -r -i <agent_id> -g <group_name>
 ```
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20removal%20from%20grp.png">
  
 Then confirm it's gone:
  
 ```bash
 /var/ossec/bin/agent_groups -s -i <agent_id>
 ```
- 
-*[INSERT SCREENSHOT — Terminal output showing the agent removal command followed by the group membership check confirming removal]*
- 
-*[INSERT SCREENSHOT — Group membership output showing the agent now belongs only to its remaining groups]*
  
 ---
  
@@ -230,21 +224,13 @@ First, check what groups the agent currently belongs to:
 /var/ossec/bin/agent_groups -s -i <agent_id>
 ```
  
-*[INSERT SCREENSHOT — Output showing the agent currently belonging to multiple groups (e.g., "windows" and "demo")]*
- 
 Then overwrite all existing memberships and assign it to a single new group:
  
 ```bash
 /var/ossec/bin/agent_groups -a -f -i <agent_id> -g <new_group_name>
 ```
  
-Confirm the change:
- 
-```bash
-/var/ossec/bin/agent_groups -s -i <agent_id>
-```
- 
-*[INSERT SCREENSHOT — Full terminal sequence showing the force-reassignment and the final group membership confirmation]*
+Confirm the change.
  
 ---
  
@@ -258,13 +244,11 @@ Log into the Wazuh Dashboard and head to:
  
 **Agent Management → Groups**
  
-*[INSERT SCREENSHOT — Wazuh Dashboard navigation showing the path to Agent Management > Groups]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20grp%20ui.png">
  
 You'll see a list of all your groups, with agent counts and action buttons on the right side of each row.
- 
-*[INSERT SCREENSHOT — Groups overview page showing all groups, agent counts, and the Actions column with icons]*
- 
-*[INSERT SCREENSHOT — Closer view of the Actions column showing the eye (view), pencil (edit), and trash (delete) icons]*
+
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/show%20grp%20in%20ui.png">
  
 The three action icons do the following:
 - 👁️ **Eye** — View group details and the agents assigned to it
@@ -276,32 +260,27 @@ In the upper right, you have buttons to **Add new group**, refresh the view, or 
  
 ### 4.2 Assigning an Agent to a Group via Dashboard
  
-Click the **eye icon** next to the group you want to manage (e.g., the "windows" group).
+Click the **eye icon** next to the group you want to manage (e.g., the "linux_grp" group).
  
 You'll see two tabs: **Agents** (currently assigned agents) and **Files** (the group's config files, including `agent.conf`).
  
-*[INSERT SCREENSHOT — Group detail view showing the Agents tab with currently assigned agents]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/show%20agents%20in%20group%20using%20ui.png">
  
-*[INSERT SCREENSHOT — Group detail view showing the Files tab with agent.conf listed]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/show%20group%20files%20ui.png">
  
 To assign a new agent, click **Manage Agents** in the upper right corner.
  
-*[INSERT SCREENSHOT — "Manage Agents" button highlighted in the upper right of the group detail view]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/click-manage-agents.png">
  
 A two-panel view appears:
 - **Left panel** — All available agents (not yet in this group)
 - **Right panel** — Agents currently assigned to this group
-*[INSERT SCREENSHOT — Manage Agents panel showing left (available) and right (assigned) columns]*
- 
-*[INSERT SCREENSHOT — Closer view of the two-panel layout showing agent names in both columns]*
  
 Double-click an agent on the left to move it to the right, then click **Apply Changes** to confirm.
  
-*[INSERT SCREENSHOT — Post-assignment view showing the agent now visible in the right "assigned" panel]*
- 
 After saving, the agent will appear in the group list and automatically receive the group's configuration.
  
-*[INSERT SCREENSHOT — Updated group view showing the newly assigned agent now listed under the group]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/manage%20agents%20ui.png">
  
 ---
  
@@ -309,23 +288,21 @@ After saving, the agent will appear in the group list and automatically receive 
  
 In the **Manage Agents** panel, double-click the agent in the right-hand (assigned) panel to move it back to the left. Alternatively, use the **Remove selected items** option. Hit **Apply Changes** to confirm.
  
-*[INSERT SCREENSHOT — Manage Agents panel showing the remove action with the agent being moved back to the available column]*
- 
 ---
  
 ### 4.4 Editing a Group's Configuration via Dashboard
  
 Go back to **Agent Management → Groups**. Click the **pencil icon** next to the group you want to configure.
  
-*[INSERT SCREENSHOT — Groups list with the pencil/edit icon highlighted for a specific group]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/edit%20grp%20conf%20ui.png">
  
 You'll land directly in the `agent.conf` editor. This is the same file we discussed earlier — where you define log file paths to monitor, FIM directories, syscheck settings, and more. Any changes here are automatically pushed to all agents in that group.
  
-*[INSERT SCREENSHOT — agent.conf editor in the Dashboard showing an example Windows Event Log monitoring configuration]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20conf%20file%20ui.png">
  
 To create a brand new group, just click **Add new group** in the upper right of the Groups page, give it a name, and save.
  
-*[INSERT SCREENSHOT — "Add new group" dialog or button visible in the Groups section]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/add%20new%20grp%20ui.png">
  
 ---
  
@@ -348,14 +325,14 @@ Connect to your Wazuh manager via SSH and start by listing agents that are runni
 /var/ossec/bin/agent_upgrade -l
 ```
  
-*[INSERT SCREENSHOT — Terminal output of agent_upgrade -l showing agents on older versions (e.g., 4.12) that are eligible for upgrade]*
+<img src="">
  
 You can also run the tool with no flags to see all available options:
  
 ```bash
 /var/ossec/bin/agent_upgrade
 ```
- 
+<img src=""> 
 *[INSERT SCREENSHOT — agent_upgrade help output showing all available flags and usage options]*
  
 To upgrade a single agent:
@@ -371,11 +348,13 @@ To upgrade multiple agents at once:
 ```
  
 > **Prerequisite:** The target agent must be in **Active** status and connected to the manager. Disconnected agents can't be upgraded remotely.
- 
+
+<img src="">
 *[INSERT SCREENSHOT — Terminal showing the upgrade command being run and the successful upgrade output from version 4.12 to 4.14]*
  
 > **Gotcha to watch out for:** Occasionally, the upgrade command returns output saying the agent was updated to the same version it was already on. This is a known quirk — just run the command again and it typically completes successfully on the second attempt.
- 
+
+ <img src="">
 *[INSERT SCREENSHOT — Terminal showing the quirk where the upgrade reports the same version, and then the re-run succeeding]*
  
 After the upgrade, verify the agent's current version:
@@ -383,7 +362,7 @@ After the upgrade, verify the agent's current version:
 ```bash
 /var/ossec/bin/agent_control -i <agent_id>
 ```
- 
+<img src="">
 *[INSERT SCREENSHOT — agent_control output confirming the agent is now running Wazuh 4.14]*
  
 ---
