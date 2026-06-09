@@ -377,24 +377,11 @@ After the upgrade, verify the agent's current version:
  
 For clustered environments or automated workflows, the API approach is recommended. Here's the full process:
  
-**Step 1 , Authenticate:**
+**Step 1 - Authenticate:**
  
 ```bash
 TOKEN=$(curl -u <WAZUH_API_USER>:<WAZUH_API_PASSWORD> -k -X POST \
   "https://localhost:55000/security/user/authenticate?raw=true")
-```
- 
-You can retrieve the current API password with:
-
-First find the installation location
-
-```bash
-find / -name "wazuh-install-files.tar" 2>dev/null
-```
-Then check the passwords
-
-```bash
-tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 ```
  
 **Step 2 , Check your token:**
@@ -403,16 +390,8 @@ tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.
 echo $TOKEN
 ```
  
-**Step 3 , Verify API connectivity:**
- 
-```bash
-curl -k -X GET "https://localhost:55000/?pretty=true" \
-  -H "Authorization: Bearer $TOKEN"
-```
- 
-*[INSERT SCREENSHOT , Terminal showing successful API authentication and the test connectivity response]*
- 
-**Step 4 , List agents with outdated versions:**
+
+**Step 3 - List agents with outdated versions:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
@@ -420,7 +399,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,na
 ```
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/list%20agents%20api.png">
 
-**Step 5 , Trigger the upgrade:**
+**Step 4 - Trigger the upgrade:**
  
 ```bash
 curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade?agents_list=<agent_id>,<agent_id>&pretty=true" \
@@ -429,7 +408,7 @@ curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade?agents_list=<age
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/upgrade%20agents%20using%20api.png">
  
-**Step 6 , Check upgrade result:**
+**Step 5 - Check upgrade result:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade_result?agents_list=<agent_id>&pretty=true" \
@@ -438,7 +417,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade_result?agents_li
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/check%20agent%20upgrade%20result%20api.png">
  
-**Step 7 , Confirm the new version:**
+**Step 6 - Confirm the new version:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
@@ -448,7 +427,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,na
  
 ---
  
-## 6. Upgrading Wazuh Agents , Dashboard Method
+## 6. Upgrading Wazuh Agents - Dashboard Method
  
 If you'd rather handle upgrades from the UI , especially useful during a quick operational check , the Dashboard makes it straightforward.
  
@@ -483,11 +462,54 @@ For bulk upgrades, select the agents using the checkboxes on the left, then clic
  
 ## 7. Removing Agents via API
  
-When an endpoint is decommissioned, repurposed, or simply removed from your monitored scope, you'll want to clean it up from the Wazuh manager too. Stale agents clutter your dashboard, skew your agent count, and can cause confusion during incident response.
+When an endpoint is decommissioned, repurposed, or simply removed from your monitored scope, you'll want to clean it up from the Wazuh manager too. 
  
-> **Important distinction:** Removing an agent from the Wazuh manager (via CLI or API) does **not** uninstall the agent software from the endpoint itself. It simply de-registers the agent from the manager , it will no longer appear in the Dashboard or consume a license slot. To fully remove Wazuh from the endpoint, you'll need to uninstall the package separately.
+> **Important distinction:** Removing an agent from the Wazuh manager (via CLI or API) does **not** uninstall the agent software from the endpoint itself. It simply de-registers the agent from the manager , it will no longer appear in the Dashboard. To fully remove Wazuh from the endpoint, you'll need to uninstall the package separately.
+---
+## Uninstalling the Wazuh Agent from the Endpoint
+---
+ 
+### Linux
+ 
+**RPM-based systems (RHEL, CentOS, Amazon Linux):**
+ 
+```bash
+sudo systemctl stop wazuh-agent
+sudo yum remove wazuh-agent -y
+```
+ 
+**DEB-based systems (Ubuntu, Debian):**
+ 
+```bash
+sudo systemctl stop wazuh-agent
+sudo apt-get remove wazuh-agent -y
+```
+ 
+After removal, clean up any residual configuration files:
+ 
+```bash
+sudo rm -rf /var/ossec
+```
  
 ---
+ 
+### Windows
+ 
+Open **PowerShell as Administrator** and run:
+ 
+```powershell
+msiexec.exe /x wazuh-agent-4.14.0-1.msi /qn
+```
+ 
+If the installation folder remains and you want to ensure all configuration and local files are completely deleted, delete the `ossec-agent` directory:
+ 
+```
+rd /s /q "C:\Program Files (x86)\ossec-agent"
+```
+ 
+---
+ 
+> **Note:** Always remove the agent from the Wazuh manager first (via CLI or Dashboard), then uninstall from the endpoint. Doing it in reverse leaves a ghost entry in your agent list until the manager times it out.
  
 Generate your JWT token:
  
@@ -514,18 +536,11 @@ curl -k -X DELETE \
  
 ---
  
-## 8. Final Thoughts
+## Final Thoughts
  
-From a SOC perspective, agent management is one of those foundational skills that pays dividends quietly , until it doesn't, and you realise half your agents have been on an outdated version for six months or that your Windows endpoints have been running with the default config all along.
+Honestly, I put this guide together as much for myself as for anyone reading it. Agent management isn't something that gets covered in depth in most Wazuh tutorials, and I found myself piecing things together from documentation, trial and error, and a few frustrating moments in the terminal.
  
-Here's what I'd take away from this guide:
- 
-- **Group your agents from day one.** Default configs are a starting point, not a destination.
-- **Use the CLI for scripting and automation; use the Dashboard for quick operational tasks.** Both paths are valid; know when to use each.
-- **Keep agents current.** Version mismatches between agents and the manager can silently limit your detection capabilities.
-- **Use the API in cluster environments.** The `agent_upgrade` tool is great for standalone setups, but for HA deployments, the API is more reliable.
-- **Schedule regular cleanup.** Stale agents are noise. The API's `older_than` filter makes it easy to automate this.
-Agent management isn't glamorous work, but it's the kind of thing that separates a well-run Wazuh deployment from one that causes headaches during a real incident.
+I'm still learning too, and if anything here is off or could be done better, I'd genuinely love to hear it. Drop a comment or reach out, that's how we all get better at this.
  
 ---
  
