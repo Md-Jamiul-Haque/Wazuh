@@ -161,7 +161,24 @@ If you prefer automation or work in a cluster environment, the Wazuh RESTful API
 ```bash
 curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/authenticate"
 ```
- 
+> ### 🔑 Finding Your Wazuh Passwords
+>
+> The credentials are stored in `wazuh-install-files.tar`, generated at installation time.
+>
+> **Step 1 — Locate the archive:**
+>
+> ```bash
+> sudo find / -name "wazuh-install-files.tar" 2>/dev/null
+> ```
+>
+> **Step 2 — Extract and read the passwords:**
+>
+> ```bash
+> sudo tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
+> ```
+>
+> Replace `/path/to/` with the path returned in Step 1. The `-O` flag pipes the file contents directly to your terminal rather than extracting it to disk.
+
 > **Heads up:** JWT tokens issued by the Wazuh API expire after **15 minutes (900 seconds)**. If your subsequent API calls start failing with auth errors, just re-run the authentication command above to get a fresh token.
  
 **Step 2 , Assign the agent to a group:**
