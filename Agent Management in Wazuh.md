@@ -60,7 +60,7 @@ The default group lives at `/var/ossec/etc/shared/default/` and comes pre-loaded
  
 ---
  
-## 3. Agent Grouping , CLI Method
+## 3. Agent Grouping - CLI Method
  
 ### 3.1 Exploring the Shared Directory
  
@@ -156,7 +156,7 @@ Or for a more targeted check:
  
 If you prefer automation or work in a cluster environment, the Wazuh RESTful API is the way to go. It's a bit more involved, but extremely powerful once you get the hang of it.
  
-**Step 1 , Authenticate and get your JWT token:**
+**Step 1 - Authenticate and get your JWT token:**
  
 ```bash
 curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/authenticate"
@@ -165,13 +165,13 @@ curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/auth
 >
 > The credentials are stored in `wazuh-install-files.tar`, generated at installation time.
 >
-> **Step 1 — Locate the archive:**
+> **Locate the archive:**
 >
 > ```bash
 > sudo find / -name "wazuh-install-files.tar" 2>/dev/null
 > ```
 >
-> **Step 2 — Extract and read the passwords:**
+> **Extract and read the passwords:**
 >
 > ```bash
 > sudo tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
@@ -181,7 +181,7 @@ curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/auth
 
 > **Heads up:** JWT tokens issued by the Wazuh API expire after **15 minutes (900 seconds)**. If your subsequent API calls start failing with auth errors, just re-run the authentication command above to get a fresh token.
  
-**Step 2 , Assign the agent to a group:**
+**Step 2 - Assign the agent to a group:**
  
 ```bash
 curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/<agent_id>/group/<group_name>?pretty=true" \
@@ -192,7 +192,7 @@ curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/<agent_id>/group/<group_
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20assign%20using%20api.png">
  
-**Step 3 , Verify via CLI:**
+**Step 3 - Verify via CLI:**
  
 ```bash
 /var/ossec/bin/agent_groups -l -g <group_name>
@@ -287,8 +287,8 @@ To assign a new agent, click **Manage Agents** in the upper right corner.
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/click-manage-agents.png">
  
 A two-panel view appears:
-- **Left panel** , All available agents (not yet in this group)
-- **Right panel** , Agents currently assigned to this group
+- **Left panel** - All available agents (not yet in this group)
+- **Right panel** - Agents currently assigned to this group
  
 Double-click an agent on the left to move it to the right, then click **Apply Changes** to confirm.
  
@@ -320,7 +320,7 @@ To create a brand new group, just click **Add new group** in the upper right of 
  
 ---
  
-## 5. Upgrading Wazuh Agents , CLI Method
+## 5. Upgrading Wazuh Agents - CLI Method
  
 Keeping agents on the same version as your Wazuh manager isn't optional , it's a requirement for full feature parity. When Wazuh releases a new module or detection capability, outdated agents simply won't support it. In a large-scale environment, manually updating each endpoint is impractical. Thankfully, Wazuh supports **remote agent upgrades** right out of the box.
  
@@ -384,7 +384,7 @@ TOKEN=$(curl -u <WAZUH_API_USER>:<WAZUH_API_PASSWORD> -k -X POST \
   "https://localhost:55000/security/user/authenticate?raw=true")
 ```
  
-**Step 2 , Check your token:**
+**Step 2 - Check your token:**
  
 ```bash
 echo $TOKEN
