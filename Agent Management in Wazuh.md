@@ -1,4 +1,4 @@
-# Wazuh Agent Management: A Practical Guide for Security Engineers
+# Wazuh Agent Management: A Practical Guide
  
 **By Md Jamiul Haque | SOC Analyst & Blue Teamer**
  
@@ -7,9 +7,9 @@
  <img src="https://imgs.search.brave.com/CjKzIViYGbWoDHhE6UG8s21OMLcQsNf2JocoooLh350/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly83NzIz/OTk4LmZzMS5odWJz/cG90dXNlcmNvbnRl/bnQtbmExLm5ldC9o/dWJmcy83NzIzOTk4/L3dhenVoLnBuZw">
 ---
  
-If you've spent any time in a SOC managing endpoint visibility, you already know that keeping your monitoring agents organised and up to date isn't just good hygiene — it's operationally critical. The moment your agents fall out of sync, your detection coverage has gaps you might not even be aware of.
+If you've spent any time in a SOC managing endpoint visibility, you already know that keeping your monitoring agents organised and up to date isn't just good hygiene , it's operationally critical. The moment your agents fall out of sync, your detection coverage has gaps you might not even be aware of.
  
-Wazuh is one of the most capable open-source SIEM and XDR platforms out there, and one of its underappreciated strengths is how much control it gives you over agent management. In this guide, I'll walk you through everything you need to know — from organising agents into groups, to performing remote upgrades, to cleaning up stale agents — all from both the command line and the Dashboard.
+Wazuh is one of the most capable open-source SIEM and XDR platforms out there, and one of its underappreciated strengths is how much control it gives you over agent management. In this guide, I'll walk you through everything you need to know , from organising agents into groups, to performing remote upgrades, to cleaning up stale agents , all from both the command line and the Dashboard.
  
 Whether you prefer clicking through a GUI or living in the terminal, I've got you covered.
  
@@ -19,8 +19,8 @@ Whether you prefer clicking through a GUI or living in the terminal, I've got yo
  
 1. Why Agent Management Matters in a SOC
 2. Understanding Agent Groups
-3. Agent Grouping — CLI Method
-4. Agent Grouping — Dashboard (GUI) Method
+3. Agent Grouping , CLI Method
+4. Agent Grouping , Dashboard (GUI) Method
 5. Upgrading Wazuh Agents via CLI
 6. Upgrading Wazuh Agents via Dashboard
 7. Removing Wazuh Agents
@@ -29,11 +29,11 @@ Whether you prefer clicking through a GUI or living in the terminal, I've got yo
  
 ## 1. Why Agent Management Matters in a SOC
  
-Picture this: you have 200 endpoints reporting into your Wazuh manager. Some are Windows workstations, some are Linux servers, a few are critical infrastructure hosts. They're all dumping logs into the same pipeline — with the same default configuration. No differentiation, no targeted monitoring, no group-specific rules.
+Picture this: you have 200 endpoints reporting into your Wazuh manager. Some are Windows workstations, some are Linux servers, a few are critical infrastructure hosts. They're all dumping logs into the same pipeline , with the same default configuration. No differentiation, no targeted monitoring, no group-specific rules.
  
 From a detection standpoint, that's noise. From an operational standpoint, that's a management nightmare.
  
-Wazuh solves this through **agent groups** — a way to assign tailored configurations to sets of agents based on their role, OS, or criticality. Pair that with remote upgrade capabilities, and you have a surprisingly powerful fleet management system built right into your SIEM.
+Wazuh solves this through **agent groups** , a way to assign tailored configurations to sets of agents based on their role, OS, or criticality. Pair that with remote upgrade capabilities, and you have a surprisingly powerful fleet management system built right into your SIEM.
  
 Let's dig in.
  
@@ -41,26 +41,26 @@ Let's dig in.
  
 ## 2. Understanding Agent Groups
  
-Every Wazuh agent, the moment it connects to the manager for the first time, gets automatically assigned to a group called **"default."** This group has its own configuration file and a set of pre-installed compliance check files — CIS benchmarks, rootkit detection rules, and OS-specific audit policies.
+Every Wazuh agent, the moment it connects to the manager for the first time, gets automatically assigned to a group called **"default."** This group has its own configuration file and a set of pre-installed compliance check files , CIS benchmarks, rootkit detection rules, and OS-specific audit policies.
  
 The real power comes when you create your own groups. A common and practical approach in a SOC environment is to separate by operating system and criticality:
  
-- **Windows** — for Windows workstations and servers
-- **Linux** — for Linux-based endpoints
-- **Critical** — for high-value assets requiring stricter monitoring rules
+- **Windows** , for Windows workstations and servers
+- **Linux** , for Linux-based endpoints
+- **Critical** , for high-value assets requiring stricter monitoring rules
 Each group has its own configuration directory on the Wazuh manager, located at:
  
 ```
 /var/ossec/etc/shared/<GROUP_NAME>/
 ```
  
-The most important file in each group folder is **`agent.conf`** — this is where you define what the agents in that group should monitor, which log files to collect, what FIM paths to watch, and other behavioural settings. When an agent is assigned to a group, it automatically pulls this configuration from the manager.
+The most important file in each group folder is **`agent.conf`** , this is where you define what the agents in that group should monitor, which log files to collect, what FIM paths to watch, and other behavioural settings. When an agent is assigned to a group, it automatically pulls this configuration from the manager.
  
 The default group lives at `/var/ossec/etc/shared/default/` and comes pre-loaded with a range of compliance files right out of the box.
  
 ---
  
-## 3. Agent Grouping — CLI Method
+## 3. Agent Grouping , CLI Method
  
 ### 3.1 Exploring the Shared Directory
  
@@ -83,11 +83,11 @@ ls -lah /var/ossec/etc/shared/default
  
 Inside you'll find files like `cis_debian_linux_rcl.txt`, `win_audit_rcl.txt`, `rootkit_files.txt`, and more. These are Wazuh's built-in security and compliance check definitions, distributed automatically to all agents in the default group.
  
-Now here's what a custom group looks like — let's use a `windows_grp` group as an example:
+Now here's what a custom group looks like , let's use a `windows_grp` group as an example:
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/windows_grp-directory.png">
  
-As you can see, a custom group starts lean — just the `agent.conf` file. That's your canvas.
+As you can see, a custom group starts with just the `agent.conf` file.
  
 Let's look at what an actual `agent.conf` might contain:
  
@@ -115,9 +115,6 @@ To create a new group, use the `-a` (add) and `-g` (group name) flags:
 
 If the operation succeeds, you'll get confirmation that the group was created. Run `agent_groups` again to verify it appears in the list.
  
- 
-> **SOC Tip:** Use a naming convention from day one. Something like `win-workstations`, `linux-servers`, or `critical-assets` beats generic names when you're staring at a list of 15 groups at 2am.
- 
 ---
  
 ### 3.3 Assigning an Agent to a Group
@@ -132,7 +129,7 @@ Type `L` and hit Enter to list all agents with their IDs and statuses.
 
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/manage_agent-cli.png">
 
-> **Note:** Agent IDs in Wazuh are unique — you'll never have two agents sharing the same ID. Duplicate ID conflicts will show up as connection errors in your logs, which is worth knowing when troubleshooting.
+> **Note:** Agent IDs in Wazuh are unique , you'll never have two agents sharing the same ID. Duplicate ID conflicts will show up as connection errors in your logs.
  
 With the agent ID in hand, run:
  
@@ -159,7 +156,7 @@ Or for a more targeted check:
  
 If you prefer automation or work in a cluster environment, the Wazuh RESTful API is the way to go. It's a bit more involved, but extremely powerful once you get the hang of it.
  
-**Step 1 — Authenticate and get your JWT token:**
+**Step 1 , Authenticate and get your JWT token:**
  
 ```bash
 curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/authenticate"
@@ -167,18 +164,18 @@ curl -u <USER>:<PASSWORD> -k -X POST "https://<HOST_IP>:55000/security/user/auth
  
 > **Heads up:** JWT tokens issued by the Wazuh API expire after **15 minutes (900 seconds)**. If your subsequent API calls start failing with auth errors, just re-run the authentication command above to get a fresh token.
  
-**Step 2 — Assign the agent to a group:**
+**Step 2 , Assign the agent to a group:**
  
 ```bash
 curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/<agent_id>/group/<group_name>?pretty=true" \
   -H "Authorization: Bearer $TOKEN"
 ```
  
-> Replace `$TOKEN` with the actual token string — the variable won't resolve unless you've exported it in your session.
+> Replace `$TOKEN` with the actual token string , the variable won't resolve unless you've exported it in your session.
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20assign%20using%20api.png">
  
-**Step 3 — Verify via CLI:**
+**Step 3 , Verify via CLI:**
  
 ```bash
 /var/ossec/bin/agent_groups -l -g <group_name>
@@ -216,7 +213,7 @@ Then confirm it's gone:
  
 ### 3.6 Overwriting an Agent's Group Assignments
  
-Sometimes you need to completely reassign an agent — wiping its current group memberships and starting fresh. The `-f` flag (force) handles this:
+Sometimes you need to completely reassign an agent , wiping its current group memberships and starting fresh. The `-f` flag (force) handles this:
  
 First, check what groups the agent currently belongs to:
  
@@ -234,9 +231,9 @@ Confirm the change.
  
 ---
  
-## 4. Agent Grouping — Dashboard (GUI) Method
+## 4. Agent Grouping , Dashboard (GUI) Method
  
-If you prefer working visually — or if you're training a teammate who isn't yet comfortable in the terminal — the Wazuh Dashboard provides a clean interface for all the same operations.
+If you prefer working visually , or if you're training a teammate who isn't yet comfortable in the terminal , the Wazuh Dashboard provides a clean interface for all the same operations.
  
 ### 4.1 Navigating to Group Management
  
@@ -251,9 +248,9 @@ You'll see a list of all your groups, with agent counts and action buttons on th
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/show%20grp%20in%20ui.png">
  
 The three action icons do the following:
-- 👁️ **Eye** — View group details and the agents assigned to it
-- ✏️ **Pencil** — Open and edit the group's `agent.conf` configuration file
-- 🗑️ **Trash** — Delete the group entirely
+- 👁️ **Eye** , View group details and the agents assigned to it
+- ✏️ **Pencil** , Open and edit the group's `agent.conf` configuration file
+- 🗑️ **Trash** , Delete the group entirely
 In the upper right, you have buttons to **Add new group**, refresh the view, or export the group data as a CSV file.
  
 ---
@@ -273,8 +270,8 @@ To assign a new agent, click **Manage Agents** in the upper right corner.
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/click-manage-agents.png">
  
 A two-panel view appears:
-- **Left panel** — All available agents (not yet in this group)
-- **Right panel** — Agents currently assigned to this group
+- **Left panel** , All available agents (not yet in this group)
+- **Right panel** , Agents currently assigned to this group
  
 Double-click an agent on the left to move it to the right, then click **Apply Changes** to confirm.
  
@@ -296,7 +293,7 @@ Go back to **Agent Management → Groups**. Click the **pencil icon** next to th
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/edit%20grp%20conf%20ui.png">
  
-You'll land directly in the `agent.conf` editor. This is the same file we discussed earlier — where you define log file paths to monitor, FIM directories, syscheck settings, and more. Any changes here are automatically pushed to all agents in that group.
+You'll land directly in the `agent.conf` editor. This is the same file we discussed earlier , where you define log file paths to monitor, FIM directories, syscheck settings, and more. Any changes here are automatically pushed to all agents in that group.
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20conf%20file%20ui.png">
  
@@ -306,9 +303,9 @@ To create a brand new group, just click **Add new group** in the upper right of 
  
 ---
  
-## 5. Upgrading Wazuh Agents — CLI Method
+## 5. Upgrading Wazuh Agents , CLI Method
  
-Keeping agents on the same version as your Wazuh manager isn't optional — it's a requirement for full feature parity. When Wazuh releases a new module or detection capability, outdated agents simply won't support it. In a large-scale environment, manually updating each endpoint is impractical. Thankfully, Wazuh supports **remote agent upgrades** right out of the box.
+Keeping agents on the same version as your Wazuh manager isn't optional , it's a requirement for full feature parity. When Wazuh releases a new module or detection capability, outdated agents simply won't support it. In a large-scale environment, manually updating each endpoint is impractical. Thankfully, Wazuh supports **remote agent upgrades** right out of the box.
  
 > **Important version rules to know:**
 > - Agent version must be **equal to or lower** than the manager version
@@ -349,7 +346,7 @@ To upgrade multiple agents at once:
 
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20upgrade%20cli.png">
  
-> **Gotcha to watch out for:** Occasionally, the upgrade command returns output saying the agent was updated to the same version it was already on. This is a known quirk — just run the command again and it typically completes successfully on the second attempt.
+> **Gotcha to watch out for:** Occasionally, the upgrade command returns output saying the agent was updated to the same version it was already on. This is a known quirk , just run the command again and it typically completes successfully on the second attempt.
 
 After the upgrade, verify the agent's current version:
  
@@ -363,7 +360,7 @@ After the upgrade, verify the agent's current version:
  
 For clustered environments or automated workflows, the API approach is recommended. Here's the full process:
  
-**Step 1 — Authenticate:**
+**Step 1 , Authenticate:**
  
 ```bash
 TOKEN=$(curl -u <WAZUH_API_USER>:<WAZUH_API_PASSWORD> -k -X POST \
@@ -383,22 +380,22 @@ Then check the passwords
 tar -O -xf /path/to/wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 ```
  
-**Step 2 — Check your token:**
+**Step 2 , Check your token:**
  
 ```bash
 echo $TOKEN
 ```
  
-**Step 3 — Verify API connectivity:**
+**Step 3 , Verify API connectivity:**
  
 ```bash
 curl -k -X GET "https://localhost:55000/?pretty=true" \
   -H "Authorization: Bearer $TOKEN"
 ```
  
-*[INSERT SCREENSHOT — Terminal showing successful API authentication and the test connectivity response]*
+*[INSERT SCREENSHOT , Terminal showing successful API authentication and the test connectivity response]*
  
-**Step 4 — List agents with outdated versions:**
+**Step 4 , List agents with outdated versions:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
@@ -406,7 +403,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,na
 ```
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/list%20agents%20api.png">
 
-**Step 5 — Trigger the upgrade:**
+**Step 5 , Trigger the upgrade:**
  
 ```bash
 curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade?agents_list=<agent_id>,<agent_id>&pretty=true" \
@@ -415,7 +412,7 @@ curl -k -X PUT "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade?agents_list=<age
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/upgrade%20agents%20using%20api.png">
  
-**Step 6 — Check upgrade result:**
+**Step 6 , Check upgrade result:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade_result?agents_list=<agent_id>&pretty=true" \
@@ -424,7 +421,7 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents/upgrade_result?agents_li
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/check%20agent%20upgrade%20result%20api.png">
  
-**Step 7 — Confirm the new version:**
+**Step 7 , Confirm the new version:**
  
 ```bash
 curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,name,version&status=active" \
@@ -434,9 +431,9 @@ curl -k -X GET "https://<WAZUH_MANAGER_IP>:55000/agents?pretty=true&select=id,na
  
 ---
  
-## 6. Upgrading Wazuh Agents — Dashboard Method
+## 6. Upgrading Wazuh Agents , Dashboard Method
  
-If you'd rather handle upgrades from the UI — especially useful during a quick operational check — the Dashboard makes it straightforward.
+If you'd rather handle upgrades from the UI , especially useful during a quick operational check , the Dashboard makes it straightforward.
  
 Log into the Dashboard and navigate to:
  
@@ -444,7 +441,7 @@ Log into the Dashboard and navigate to:
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20grp%20ui.png">
  
-The agent list shows each agent's name, status, and version. If an agent is running an outdated version, you'll see a **red dot** next to its version number — your visual cue to act.
+The agent list shows each agent's name, status, and version. If an agent is running an outdated version, you'll see a **red dot** next to its version number , your visual cue to act.
  
 ### Upgrading a Single Agent
  
@@ -463,7 +460,7 @@ Once complete, check the version column to confirm the update was successful.
  
 ### Upgrading Multiple Agents at Once
  
-For bulk upgrades, select the agents using the checkboxes on the left, then click **More → Upgrade agents**. The process is the same as a single agent upgrade — just applied at scale across your selected endpoints.
+For bulk upgrades, select the agents using the checkboxes on the left, then click **More → Upgrade agents**. The process is the same as a single agent upgrade , just applied at scale across your selected endpoints.
  
 ---
  
@@ -471,7 +468,7 @@ For bulk upgrades, select the agents using the checkboxes on the left, then clic
  
 When an endpoint is decommissioned, repurposed, or simply removed from your monitored scope, you'll want to clean it up from the Wazuh manager too. Stale agents clutter your dashboard, skew your agent count, and can cause confusion during incident response.
  
-> **Important distinction:** Removing an agent from the Wazuh manager (via CLI or API) does **not** uninstall the agent software from the endpoint itself. It simply de-registers the agent from the manager — it will no longer appear in the Dashboard or consume a license slot. To fully remove Wazuh from the endpoint, you'll need to uninstall the package separately.
+> **Important distinction:** Removing an agent from the Wazuh manager (via CLI or API) does **not** uninstall the agent software from the endpoint itself. It simply de-registers the agent from the manager , it will no longer appear in the Dashboard or consume a license slot. To fully remove Wazuh from the endpoint, you'll need to uninstall the package separately.
  
 ---
  
@@ -502,7 +499,7 @@ curl -k -X DELETE \
  
 ## 8. Final Thoughts
  
-From a SOC perspective, agent management is one of those foundational skills that pays dividends quietly — until it doesn't, and you realise half your agents have been on an outdated version for six months or that your Windows endpoints have been running with the default config all along.
+From a SOC perspective, agent management is one of those foundational skills that pays dividends quietly , until it doesn't, and you realise half your agents have been on an outdated version for six months or that your Windows endpoints have been running with the default config all along.
  
 Here's what I'd take away from this guide:
  
