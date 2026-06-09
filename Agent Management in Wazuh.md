@@ -248,9 +248,9 @@ Confirm the change.
  
 ---
  
-## 4. Agent Grouping , Dashboard (GUI) Method
+## 4. Agent Grouping - Dashboard (GUI) Method
  
-If you prefer working visually , or if you're training a teammate who isn't yet comfortable in the terminal , the Wazuh Dashboard provides a clean interface for all the same operations.
+If you prefer working visually, the Wazuh Dashboard provides a clean interface for all the same operations.
  
 ### 4.1 Navigating to Group Management
  
