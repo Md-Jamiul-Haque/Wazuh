@@ -467,31 +467,13 @@ For bulk upgrades, select the agents using the checkboxes on the left, then clic
  
 ---
  
-## 7. Removing Wazuh Agents
+## 7. Removing Agents via API
  
 When an endpoint is decommissioned, repurposed, or simply removed from your monitored scope, you'll want to clean it up from the Wazuh manager too. Stale agents clutter your dashboard, skew your agent count, and can cause confusion during incident response.
  
 > **Important distinction:** Removing an agent from the Wazuh manager (via CLI or API) does **not** uninstall the agent software from the endpoint itself. It simply de-registers the agent from the manager — it will no longer appear in the Dashboard or consume a license slot. To fully remove Wazuh from the endpoint, you'll need to uninstall the package separately.
  
 ---
- 
-### 7.1 Removing Agents via CLI (`manage_agents`)
- 
-Connect to the Wazuh manager and run:
- 
-```bash
-/var/ossec/bin/manage_agents
-```
- 
-*[INSERT SCREENSHOT — manage_agents menu showing the available options including "Remove an agent (R)"]*
- 
-Type `R` and press Enter. You'll see the list of registered agents. Enter the ID of the agent you want to remove and confirm. Then list your agents again to verify it's gone.
- 
-*[INSERT SCREENSHOT — Full terminal sequence: selecting R, entering the agent ID, confirming deletion, and the updated agent list confirming removal]*
- 
----
- 
-### 7.2 Removing Agents via API
  
 Generate your JWT token:
  
@@ -516,8 +498,6 @@ curl -k -X DELETE \
   -H "Authorization: Bearer $TOKEN"
 ```
  
-This is a great command to run as part of a routine hygiene script — especially in dynamic environments where VMs or containers spin up and down frequently.
- 
 ---
  
 ## 8. Final Thoughts
@@ -535,7 +515,7 @@ Agent management isn't glamorous work, but it's the kind of thing that separates
  
 ---
  
-*If you found this useful, feel free to connect with me on LinkedIn — always happy to talk blue team and Wazuh.*
+*If you found this useful, feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/md-jamiul-haque/).*
  
 ---
  
