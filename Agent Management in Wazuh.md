@@ -442,53 +442,28 @@ Log into the Dashboard and navigate to:
  
 **Agent Management → Summary**
  
-*[INSERT SCREENSHOT — Dashboard navigation path to Agent Management > Summary]*
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20grp%20ui.png">
  
 The agent list shows each agent's name, status, and version. If an agent is running an outdated version, you'll see a **red dot** next to its version number — your visual cue to act.
- 
-*[INSERT SCREENSHOT — Agent summary list showing agents with red dots next to outdated version numbers]*
  
 ### Upgrading a Single Agent
  
 Find the agent you want to upgrade, click the **three-dot menu (⋮)** in the Actions column, and select **Upgrade**.
  
 <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/agent%20upgrade%20gui.png">
+
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh%20agent%20management/confirm%20agent%20upgrade%20gui.png">
  
-*[INSERT SCREENSHOT — Upgrade confirmation or progress indicator appearing after clicking Upgrade]*
  
 The process typically takes around 1–2 minutes. You can monitor the status directly in the Dashboard.
  
-*[INSERT SCREENSHOT — Dashboard showing the agent upgrade progress with an "in progress" status indicator]*
- 
-*[INSERT SCREENSHOT — Dashboard showing the upgrade status marked as "done"]*
- 
 Once complete, check the version column to confirm the update was successful.
- 
-*[INSERT SCREENSHOT — Agent list showing the updated agent now displaying version 4.14 with no red dot]*
  
 ---
  
 ### Upgrading Multiple Agents at Once
  
-Select the agents you want to upgrade using the **checkboxes** on the left side of the agent list.
- 
-*[INSERT SCREENSHOT — Agent list with multiple agents selected via checkboxes]*
- 
-Then click **More → Upgrade agents**.
- 
-*[INSERT SCREENSHOT — "More" dropdown showing the "Upgrade agents" option]*
- 
-*[INSERT SCREENSHOT — Bulk upgrade confirmation dialog or progress view]*
- 
-> **Scale consideration:** Bulk upgrades from the Dashboard work well for smaller fleets. For environments with ~3,000+ agents, use the API with appropriate timeout parameters to avoid hitting the API timeout limit.
- 
-*[INSERT SCREENSHOT — Bulk upgrade progress screen showing multiple agents being updated]*
- 
-*[INSERT SCREENSHOT — Completion view showing all selected agents successfully upgraded]*
- 
-Once done, verify the version column for each upgraded agent to confirm everything landed correctly.
- 
-*[INSERT SCREENSHOT — Final agent list showing all upgraded agents now on version 4.14]*
+For bulk upgrades, select the agents using the checkboxes on the left, then click **More → Upgrade agents**. The process is the same as a single agent upgrade — just applied at scale across your selected endpoints.
  
 ---
  
