@@ -16,6 +16,8 @@ A standard Wazuh deployment relies on four core components working together. Whe
 
 - **Wazuh Agents:** Lightweight software installed on endpoints—including laptops, desktops, servers, cloud instances, and virtual machines running Linux, Windows, macOS, Solaris, AIX, or HP-UX. They provide direct threat prevention, detection, and response capabilities.
 
+<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/deployment-architecture.png">
+
 > Note on Agentless Monitoring: For network devices that cannot host an agent (like firewalls, switches, and routers), the platform can still collect system logs via Syslog or probe data periodically via SSH and APIs.
 
 # Wazuh Indexer
