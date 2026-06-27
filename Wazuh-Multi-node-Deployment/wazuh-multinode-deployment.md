@@ -20,7 +20,7 @@ A standard Wazuh deployment relies on four core components working together. Whe
 
 > Note on Agentless Monitoring: For network devices that cannot host an agent (like firewalls, switches, and routers), the platform can still collect system logs via Syslog or probe data periodically via SSH and APIs.
 
-# Wazuh Indexer
+# Installing Wazuh Indexer Step by Step
 Wazuh indexer is a highly scalable full-text search engine and offers advanced security, alerting, index management, deep performance analysis, and several other features.
 
 The installation process is divided into three stages:
@@ -28,5 +28,11 @@ The installation process is divided into three stages:
 - Certificate creation
 - Wazuh indexer nodes installation
 - Cluster initialization
+
+## Certificate creation
+Wazuh uses certificates to establish confidentiality and encrypt communications between its central components. Follow these steps to create certificates for the Wazuh central components.
+
+- **1.** Download the `wazuh-certs-tool.sh` script and the `config.yml` configuration file. This creates the certificates that encrypt communications between the Wazuh central components.
+
 
 ### Will update soon....
