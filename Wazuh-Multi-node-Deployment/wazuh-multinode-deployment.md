@@ -32,19 +32,22 @@ The installation process is divided into three stages:
 ## Certificate creation
 Wazuh uses certificates to establish confidentiality and encrypt communications between its central components. Follow these steps to create certificates for the Wazuh central components.
 
-- **1.** Download the `wazuh-certs-tool.sh` script and the `config.yml` configuration file. This creates the certificates that encrypt communications between the Wazuh central components.
-- **2.** Edit `./config.yml` and replace the node names and IP values with the corresponding names and IP addresses. You need to do this for all Wazuh server, Wazuh indexer, and Wazuh dashboard nodes. Add as many node fields as needed.
+1. Download the `wazuh-certs-tool.sh` script and the `config.yml` configuration file. This creates the certificates that encrypt communications between the Wazuh central components.
+2. Edit `./config.yml` and replace the node names and IP values with the corresponding names and IP addresses. You need to do this for all Wazuh server, Wazuh indexer, and Wazuh dashboard nodes. Add as many node fields as needed.
 
-<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/config-yml.png">
-- **3.** Run `./wazuh-certs-tool.sh` to create the certificates. For a multi-node cluster, these certificates need to be later deployed to all Wazuh instances in your cluster.
+   <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/config-yml.png">
 
-<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/cert-generation.png">
-- **4.** Compress all the necessary files.
+3. Run `./wazuh-certs-tool.sh` to create the certificates. For a multi-node cluster, these certificates need to be later deployed to all Wazuh instances in your cluster.
 
-<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/tar-certificates.png">
-- **5.** Copy the `wazuh-certificates.tar` file to all the nodes, including the Wazuh indexer, Wazuh server, and Wazuh dashboard nodes. This can be done by using the `scp` utility.
+   <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/cert-generation.png">
 
-<img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/cert-transfer.png">
+4. Compress all the necessary files.
+
+   <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/tar-certificates.png">
+
+5. Copy the `wazuh-certificates.tar` file to all the nodes, including the Wazuh indexer, Wazuh server, and Wazuh dashboard nodes. This can be done by using the `scp` utility.
+
+   <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/cert-transfer.png">
 
 > Check out this link to learn about secure file transfer using [scp](https://github.com/Md-Jamiul-Haque/sys-recipes/blob/main/copy-files-to-remote-machine-using-scp.md)
 
