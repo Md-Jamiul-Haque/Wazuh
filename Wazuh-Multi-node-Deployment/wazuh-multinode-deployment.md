@@ -51,4 +51,42 @@ Wazuh uses certificates to establish confidentiality and encrypt communications 
 
 > Check out this link to learn about secure file transfer using [scp](https://github.com/Md-Jamiul-Haque/sys-recipes/blob/main/copy-files-to-remote-machine-using-scp.md)
 
+## Wazuh indexer nodes installation
+
+Follow these steps to install and configure a single-node or multi-node Wazuh indexer.
+
+1. Run the following command to install the following packages if missing:
+
+   ```bash
+   apt-get install debconf adduser procps
+   ```
+2. Adding the Wazuh repository (for debian)
+
+   ```bash
+   apt-get install gnupg apt-transport-https
+   curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
+   echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+   apt-get update
+   ```
+3. Install the Wazuh indexer package.
+
+   ```bash
+   apt-get -y install wazuh-indexer
+   ```
+
+### Configuring the Wazuh indexer
+
+1. Edit `/etc/wazuh-indexer/opensearch.yml` and replace the following values:
+   a. `network.host:` Sets the address of this node for both HTTP and transport traffic. The node will bind to this address and use it as its publish address. Accepts an IP address or a hostname. Use the same node address set in `config.yml` to create the SSL certificates.
+
+   b. `node.name:` Name of the Wazuh indexer node as defined in the `config.yml` file. For example, `indexer-1`.
+
+   c. `cluster.initial_master_nodes:` List of the names of the master-eligible nodes. These names are defined in the `config.yml` file. Uncomment the node-2 and node-3 lines, change the names, or add more lines,        according to your `config.yml` definitions.
+   d. `discovery.seed_hosts:` List of the addresses of the master-eligible nodes. Each element can be either an IP address or a hostname. You may leave this setting commented if you are configuring the
+       Wazuh indexer as a single node. For multi-node configurations, uncomment this setting and set the IP addresses of each master-eligible node.
+   e. `plugins.security.nodes_dn:` List of the Distinguished Names of the certificates of all the Wazuh indexer cluster nodes. Uncomment the lines for node-2 and node-3 and change the common names (CN)
+       and  values according to your settings and your `config.yml` definitions.
+
+   <img src="https://github.com/Md-Jamiul-Haque/Wazuh/blob/main/Wazuh-Multi-node-Deployment/Pictures/config-yml.png">
+
 ### Will update soon....
